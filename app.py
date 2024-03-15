@@ -1,7 +1,25 @@
-from flask import Flask, render_template, jsonify, request, redirect, url_for
-from database import load_authors_from_db, load_book_details, add_review_to_db
+from flask import Flask, jsonify, redirect, render_template, request, url_for
+
+from database import (
+    add_review_to_db,
+    load_authors_from_db,
+    load_book_details,
+    load_reviews_from_db,
+)
 
 app = Flask(__name__)
+
+# Display all reviews for particular book on that book's reviews page
+# Add word filter for reviews
+# Add pagination for reviews (that thing with the pages listed (< 1 2 3 >)) OR infinite scroll
+# Search bar for books
+# Sorting books and reviews
+# Getting book info from some API
+# Add user login
+# Add captcha to form
+# Add admin login
+# Rating for each book in review
+# Like reviews
 
 
 @app.errorhandler(403)
@@ -69,10 +87,41 @@ def create_review(id):
   # return render_template('review.html', review=data, book=book)
   return redirect(url_for('review_submitted', id=id))
 
+
 @app.route("/book/<id>/review/submitted")
 def review_submitted(id):
-    book = load_book_details(id)
-    return render_template('review.html', book=book)
+  book = load_book_details(id)
+  return render_template('review.html', book=book)
+
+
+# @app.route("/book/<id>/reviews")
+# def load_reviews(id):
+#     book = load_book_details(id)
+#     reviews_data = load_reviews_from_db(id)
+
+#     fetched_reviews = []
+#     for row in reviews_data:
+#         fetched_reviews.append(row._asdict())
+
+#     if not fetched_reviews:
+#         return "No reviews found for this book"
+#     else:
+#       return render_template('reviews.html', reviews_data=fetched_reviews, book=book)
+# return jsonify(reviews_data)
+
+
+@app.route("/book/<id>/reviews")
+def load_reviews(id):
+  book = load_book_details(id)
+  reviews_data = load_reviews_from_db(id)
+
+  # If load_reviews_from_db returned None, meaning there are no reviews
+  if reviews_data is None:
+    return "No reviews found for this book", 404
+  else:
+    # Since reviews_data is a list of dictionaries, we can pass it directly to the template
+    return render_template('reviews.html', reviews_data=reviews_data, book=book)
+
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True)

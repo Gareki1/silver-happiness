@@ -22,13 +22,25 @@ def load_book_details(id):
     else:
       return rows[0]._asdict()
 
-# def add_review_to_db(book_id, data):
+def load_reviews_from_db(id):
+  with engine.connect() as conn:
+    result = conn.execute(text("SELECT * FROM reviews WHERE book_id = :val"), {"val": id})
+    rows = result.all()
+    if len(rows) == 0:
+      return None
+    else:
+      return rows
+
+# def load_reviews_from_db(id):
 #   with engine.connect() as conn:
-#     query = text("INSERT INTO reviews (book_id, title, content) VALUES (:book_id, :title, :content)")
-#     conn.execute(query,
-#                  book_id = book_id,
-#                  title = data['title'],
-#                  content = data['review_content'])
+#       result = conn.execute(text("SELECT * FROM reviews WHERE book_id = :val"), {"val": id})
+#       rows = result.fetchall()# Use fetchall() to get all rows
+#       if not rows:
+#           return None
+#       else:
+#           # Convert each row to a dictionary and return the list of dictionaries
+#           return [dict(row) for row in rows]
+
 def add_review_to_db(book_id, data):
   with engine.connect() as conn:
       trans = conn.begin()  # Start a transaction

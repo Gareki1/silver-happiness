@@ -7,10 +7,10 @@
       <span>{{book.authorname}}</span>
       <p>{{book.blurb}}</p>
       <form id="review_form" action="/book/{{book['id']}}/review" method="post">
-      <span>Submit new review</span>
+      <span>Submit new review</span><br>
       <input type="text" name="title" class="form_ele" id="review_title" required placeholder="title"><br>
       <textarea name="review_content" class="form_ele" id="review_text" required placeholder="Write something..."></textarea><br>
-      <input type="submit">
+      <input class="post_review" type="submit" value="Post Review">
       </form>
     </div>
     {% include 'footer.html' %}
